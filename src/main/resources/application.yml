@@ -1,0 +1,12 @@
+spring:
+  mvc:
+    view:
+      suffix: .jsp
+      prefix: /WEB-INF/views/
+    static-path-pattern: /resources/**
+
+welcome:
+  message: Welcome Sambuja Cor.
+
+file:
+  uploadPath: D://FileUpload//excel//
