@@ -55,42 +55,43 @@ public class ExcelConvertController {
 
         excel.getRowData();
 
-        List<DtoInterface> dtoInterfaces = excel.downloadExcelFile();
+        List<DtoInterface> dtoInterfaces = excel.makeDistinctData();
 
         Workbook newExcel = this.poiCommon.createNewExcel(dtoInterfaces);
 
         String uploadPath = this.makeFolder();
 
-        File file= new File(uploadPath + "\\testWrite.xlsx");
+        File file= new File(uploadPath + "\\NaverToCJ.xlsx");
 
         newExcel.write(new FileOutputStream(file));
 
         newExcel.close();
-        // 이미지 파일만 업로드
-        /*if (!Objects.requireNonNull(uploadFile.getContentType()).startsWith("image")) {
-            log.warn("this file is not image type");
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }*/
 
-        /*try {
-            response.setContentType("ms-vnd/excel");
-            response.setHeader("Content-Disposition", "attachment;filename=student.xlsx");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-            newExcel.write(response.getOutputStream());
-        } catch (IOException e) {
-            log.debug("다운로드중 에러가 발생하였습니다.");
+    @PostMapping("/copyToNaverDelivery")
+    public ResponseEntity copyToNaverDelivery(@ModelAttribute FileDto dto, HttpServletResponse response) throws IOException {
 
-        }finally {
-            try {
-                if(newExcel != null) {
-                    newExcel.close();
-                }
-            } catch (IOException e) {
-                // checked 예외를 사용하면 추후 의존이나 예외 누수 문제가 생길 수 있으므로
-                // RuntimeException으로 한번 감싸서, cause가 나올 수 있게 발생한 예외를 넣어준다.
-                throw new RuntimeException(e);
+        ConvertExcel excel1 = null;
+        ConvertExcel excel2 = null;
+
+        for(MultipartFile file : dto.getFiles()) {
+            String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+
+            if (!extension.equals("xlsx") && !extension.equals("xls")) {
+                log.warn("Please. Check File. You Can Upload Only Excel File");
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
-        }*/
+
+            if(excel1 == null) {
+                excel1 = this.poiCommon.validateExcelFile(file, dto.getPwd());
+                excel1.getRowData();
+            }else {
+                excel2 = this.poiCommon.validateExcelFile(file, dto.getPwd());
+                excel2.getRowData();
+            }
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

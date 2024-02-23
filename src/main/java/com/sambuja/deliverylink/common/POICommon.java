@@ -22,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j
@@ -35,6 +37,8 @@ public class POICommon {
 
         File uploadPathFolder = new File(filePath, "tmp");
 
+        String fullPath = filePath + "tmp" + File.separator + "temp.xlsx";
+
         if(!uploadPathFolder.exists()) {
             boolean mkdirs = uploadPathFolder.mkdirs();
             log.info("-------------------makeFolder------------------");
@@ -42,9 +46,10 @@ public class POICommon {
             log.info("mkdirs: "+mkdirs);
         }
 
-        File file = new File(filePath + "tmp" + File.separator + "temp.xlsx");
-        multipartFile.transferTo(file);
-        return file;
+        Path absolutePath = Paths.get(fullPath).toAbsolutePath();
+
+        multipartFile.transferTo(absolutePath);
+        return new File(fullPath);
     }
 
     //엑셀로 들어온 파일이 스마트스토어, CJ대한통운 파일인지 구분하는 메소드
@@ -54,18 +59,23 @@ public class POICommon {
 
         File tempFile = this.convertMulPartToFile(file);
 
-        try(FileInputStream fis = new FileInputStream(tempFile)){
+        FileInputStream fis = new FileInputStream(tempFile);
+
+        try{
             POIFSFileSystem poifs = new POIFSFileSystem(fis);
 
             workbook = WorkbookFactory.create(poifs.getRoot(), pwd);
-
-            sheet = workbook.getSheetAt(0);
-
         }catch (IOException e){
             throw new ErrorException(e);
-        }finally {
-            tempFile.delete();
+        }catch (Exception e){
+            workbook = new XSSFWorkbook(new FileInputStream(this.convertMulPartToFile(file)));
+        } finally{
+            if(tempFile.exists()){
+                tempFile.delete();
+            }
         }
+
+        sheet = workbook.getSheetAt(0);
 
         //네이버 - 발주발송관리
         //CJ - Sheet1

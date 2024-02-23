@@ -106,7 +106,7 @@ public class NaverSmartStore implements ConvertExcel {
     }
 
     @Override
-    public List<NaverDto> downloadExcelFile() {
+    public List<NaverDto> makeDistinctData() {
         List<NaverDto> distinctList = new ArrayList<>();
 
         for(NaverDto dto : this.rowList){

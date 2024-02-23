@@ -17,5 +17,5 @@ public interface ConvertExcel {
 
     void getRowData();
 
-    <T extends DtoInterface> List<T> downloadExcelFile();
+    <T extends DtoInterface> List<T> makeDistinctData();
 }
