@@ -7,15 +7,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ErrorException extends RuntimeException{
 
-    String message;
+    ErrorCode errorCode;
 
     public ErrorException(Throwable e){
         super(e);
     }
 
-    public ErrorException(Throwable e, String message){
+    public ErrorException(Throwable e, ErrorCode errorCode){
         super(e);
-        this.message = message;
+        this.errorCode = errorCode;
     }
 
 }

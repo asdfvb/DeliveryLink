@@ -19,7 +19,7 @@
             <col width="80%">
         </colgroup>
         <tr>
-            <h3>스마트스토어 -> CJ대한통운</h3>
+            <h3>★ 스마트스토어 -> CJ대한통운</h3>
             <ul>
                 <li style='font-weight: bold;'>스마트스토어 발주(주문)확인/발송관리 메뉴에서 다운받은 엑셀파일을 올려주세요.</li>
                 <li style='font-weight: bold;'>업로드 후 'D드라이브 > FileUpload > excel > 해당 날짜 폴더' 경로에서 파일을 찾을수 있습니다.</li>
@@ -52,7 +52,7 @@
             <col width="80%">
         </colgroup>
         <tr>
-            <h3>CJ대한통운 -> 스마트스토어</h3>
+            <h3>★ CJ대한통운 -> 스마트스토어</h3>
             <ul>
                 <li style='font-weight: bold;'>CJ대한통운 운송장출력 메뉴에서 </li>
                 <li style='font-weight: bold;'>업로드 후 'D드라이브 > FileUpload > excel > 해당 날짜 폴더' 경로에서 파일을 찾을수 있습니다.</li>

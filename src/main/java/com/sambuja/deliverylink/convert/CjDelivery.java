@@ -3,7 +3,9 @@ package com.sambuja.deliverylink.convert;
 import com.sambuja.deliverylink.dto.CjDto;
 import com.sambuja.deliverylink.dto.DtoInterface;
 import com.sambuja.deliverylink.dto.CjDto;
+import com.sambuja.deliverylink.dto.NaverDto;
 import lombok.Data;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,33 +15,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Data
 public class CjDelivery implements ConvertExcel{
 
     private Workbook workbook;
 
-    private final String[] headerList = {
-            "상품주문번호",
-            "수취인명",
-            "수취인연락처1",
-            "통합배송지",
-            "배송메세지",
-            "상품명",
-            "상품종류",
-            "수량",
-            "배송방법(구매자 요청)",
-            "배송방법",
-            "택배사",
-            "송장번호",
-            "발송일",
-            "주문번호"
-    };
+    private final String name = "CJ";
 
     private final List<CjDto> rowList = new ArrayList<>();
 
+    private List<DtoInterface> subRowList = new ArrayList<>();
+
     public CjDelivery(Workbook workbook){
         this.workbook = workbook;
+    }
+
+    @Override
+    public List<CjDto> getRowList(){
+        return rowList;
+    }
+
+    @Override
+    public void setRowList(List<DtoInterface> list){
+        this.subRowList = list;
     }
 
     @Override
@@ -97,19 +98,15 @@ public class CjDelivery implements ConvertExcel{
 
                 switch (cell.getCellType()) {
                     case BOOLEAN:
-                        System.out.println(cell.getBooleanCellValue());
                         item.setValueByCellIndex(item.getHeaderList(index), String.valueOf(cell.getBooleanCellValue()));
                         break;
                     case NUMERIC:
-                        System.out.println(cell.getNumericCellValue());
                         item.setValueByCellIndex(item.getHeaderList(index), String.valueOf(cell.getNumericCellValue()));
                         break;
                     case STRING:
-                        System.out.println(cell.getRichStringCellValue());
                         item.setValueByCellIndex(item.getHeaderList(index), String.valueOf(cell.getRichStringCellValue()));
                         break;
                     default:
-                        System.out.println("default: " + cell.getCellFormula());
                         item.setValueByCellIndex(item.getHeaderList(index), String.valueOf(cell.getCellFormula()));
                         break;
                 }
@@ -125,23 +122,61 @@ public class CjDelivery implements ConvertExcel{
 
         for(CjDto dto : this.rowList){
 
-            /*CjDto CjDto = distinctList.stream().filter(distinct -> dto.getOrderNumber().equals(distinct.getOrderNumber())).findAny().orElseGet(CjDto::new);
+            List<CjDto> validationList = distinctList
+                                            .stream()
+                                            .filter(
+                                                    item -> dto.getProductNumber().equals(item.getProductNumber())
+                                            )
+                                            .map(
+                                                item -> {
+                                                    item.setDeliveryNumber(dto.getDeliveryNumber());
+                                                    return item;
+                                                }
+                                            ).collect(Collectors.toList());
 
-            if(distinctList.size() > 0 && CjDto.getOrderNumber() != null) continue;
+            if(validationList.size() > 0){
 
-            //동일 수취인의 총 주문 수량 구하기
-            int cntSum = this.rowList.stream()
-                    .filter(item -> item.getOrderNumber().equals(dto.getOrderNumber()))
-                    .mapToInt(item -> Math.round(Float.parseFloat(item.getCnt()))).sum();
+                for(int i = 0; i < distinctList.size(); i ++){
+                    CjDto cj = distinctList.get(i);
+                    for(int j = 0; j < validationList.size(); j ++){
+                        CjDto cj2 = validationList.get(j);
+                        if(cj.getProductNumber().equals(cj2.getProductNumber())){
+                            distinctList.get(i).cloneDto(cj2);
+                        }
+                    }
+                }
 
-            BigDecimal bd = new BigDecimal(cntSum);
+                continue;
+            }
 
-            int remainValue = bd.divide(BigDecimal.valueOf(5)).setScale(0, RoundingMode.UP).intValue();
+            //rowList 행별로 subList에 고객주문번호가 일치하는 데이터 있는지 필터
+            List<DtoInterface> collect = this.subRowList
+                                            .stream()
+                                            .filter(
+                                                    item -> item.getValueByCellIndex(item.getHeaderList(0)).equals(dto.getProductNumber())
+                                            )
+                                            .collect(Collectors.toList());
 
-            for( int i = 0; i < remainValue; i++){
-                dto.setCnt("1");
-                distinctList.add(dto);
-            }*/
+            //없으면 진행
+            if(collect.size() == 0 ) continue;
+
+            DtoInterface dtoInterface = collect.get(0);
+
+            //주문번호가 같은 내역을 조회
+            List<DtoInterface> collect1 = this.subRowList
+                                            .stream()
+                                            .filter(
+                                                    item -> item.getValueByCellIndex(item.getHeaderList(13)).equals(dtoInterface.getValueByCellIndex(dtoInterface.getHeaderList(13)))
+                                            )
+                                            .collect(Collectors.toList());
+
+            for(DtoInterface subDto : collect1){
+                CjDto tmpDto = new CjDto();
+                tmpDto.cloneDto(dto);
+                tmpDto.setProductNumber(subDto.getValueByCellIndex(subDto.getHeaderList(0)));
+                distinctList.add(tmpDto);
+            }
+
         }
 
         return distinctList;

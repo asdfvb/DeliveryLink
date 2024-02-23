@@ -12,7 +12,7 @@ public class CjDto implements DtoInterface{
             "받는분우편번호",
             "받는분주소",
             "접수일자",
-            "고객주문번호",
+            "상품주문번호",
             "집회일자",
             "배송일자",
             "수량",
@@ -34,7 +34,7 @@ public class CjDto implements DtoInterface{
     private String postNumber; //받는분우편번호
     private String fullAddress; //통합배송지
     private String receptionDate; //접수일자
-    private String productNumber; //고객주문번호
+    private String productNumber; //상품주문번호
     private String gatheringDate; //집회일자
     private String deliveryDate; //배송일자
     private String cnt; //수량
@@ -68,7 +68,7 @@ public class CjDto implements DtoInterface{
             case "접수일자":
                 this.receptionDate = value;
                 break;
-            case "고객주문번호":
+            case "상품주문번호":
                 this.productNumber = value;
                 break;
             case "집회일자":
@@ -101,6 +101,12 @@ public class CjDto implements DtoInterface{
             case "에러메시지":
                 this.errorMessage = value;
                 break;
+            case "택배사":
+                this.courierCompany = value;
+                break;
+            case "택배방법":
+                this.deliveryMethod = value;
+                break;
             default:
                 break;
         }
@@ -120,7 +126,7 @@ public class CjDto implements DtoInterface{
                 return this.fullAddress;
             case "접수일자":
                 return this.receptionDate;
-            case "고객주문번호":
+            case "상품주문번호":
                 return this.productNumber;
             case "집회일자":
                 return this.gatheringDate;
@@ -142,7 +148,10 @@ public class CjDto implements DtoInterface{
                 return this.deliveryEmployeeNickname;
             case "에러메시지":
                 return this.errorMessage;
-
+            case "택배사":
+                return this.courierCompany;
+            case "택배방법":
+                return this.deliveryMethod;
             default:
                 return "";
         }
@@ -181,4 +190,26 @@ public class CjDto implements DtoInterface{
         NaverDto other = (NaverDto) obj;
         return Objects.equals(this.customerName, other.customerName);
     }*/
+
+    public void cloneDto(CjDto dto){
+        this.deliveryNumber = dto.getDeliveryNumber();
+        this.customerName = dto.getCustomerName();
+        this.phoneNumber = dto.getPhoneNumber();
+        this.postNumber = dto.getPostNumber();
+        this.fullAddress = dto.getFullAddress();
+        this.receptionDate = dto.getReceptionDate();
+        this.productNumber = dto.getProductNumber();
+        this.gatheringDate = dto.getGatheringDate();
+        this.deliveryDate = dto.getDeliveryDate();
+        this.cnt = dto.getCnt();
+        this.message1 = dto.getMessage1();
+        this.message2 = dto.getMessage2();
+        this.status = dto.getStatus();
+        this.reservation = dto.getReservation();
+        this.deliveryEmployee = dto.getDeliveryEmployee();
+        this.deliveryEmployeeNickname = dto.getDeliveryEmployeeNickname();
+        this.errorMessage = dto.getErrorMessage();
+        this.courierCompany = dto.getCourierCompany();
+        this.deliveryMethod = dto.getDeliveryMethod();
+    }
 }

@@ -4,6 +4,7 @@ import com.sambuja.deliverylink.convert.CjDelivery;
 import com.sambuja.deliverylink.convert.ConvertExcel;
 import com.sambuja.deliverylink.convert.NaverSmartStore;
 import com.sambuja.deliverylink.dto.DtoInterface;
+import com.sambuja.deliverylink.except.ErrorCode;
 import com.sambuja.deliverylink.except.ErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -83,28 +84,35 @@ public class POICommon {
     };
 
     public <T extends DtoInterface> Workbook createNewExcel(List<T> rowList) {
+
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("발송발주관리");
 
-        T t = rowList.get(0);
+        try{
+            T t = rowList.get(0);
 
-        Row headerRow = sheet.createRow(1);
+            Row headerRow = sheet.createRow(1);
 
-        //헤더 먼저 입력 (고정)
-        for(int i = 0; i < t.getHeaderSize(); i++){
-            headerRow.createCell(i).setCellValue(t.getHeaderList(i));
-        }
-
-        //실제 고객 내용 입력
-        for(int i = 0; i < rowList.size(); i++){
-            //2번째 행부터 입력
-            Row row = sheet.createRow(i + 2);
-            T dto = rowList.get(i);
-
-            for(int j = 0; j < dto.getHeaderSize(); j++){
-                row.createCell(j).setCellValue(dto.getValueByCellIndex(dto.getHeaderList(j)));
+            //헤더 먼저 입력 (고정)
+            for(int i = 0; i < t.getHeaderSize(); i++){
+                headerRow.createCell(i).setCellValue(t.getHeaderList(i));
             }
+
+            //실제 고객 내용 입력
+            for(int i = 0; i < rowList.size(); i++){
+                //2번째 행부터 입력
+                Row row = sheet.createRow(i + 2);
+                T dto = rowList.get(i);
+
+                for(int j = 0; j < dto.getHeaderSize(); j++){
+                    row.createCell(j).setCellValue(dto.getValueByCellIndex(dto.getHeaderList(j)));
+                }
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            throw new ErrorException(e, ErrorCode.ARRAY_INDEX_OUT);
         }
+
+
 
         return workbook;
     }

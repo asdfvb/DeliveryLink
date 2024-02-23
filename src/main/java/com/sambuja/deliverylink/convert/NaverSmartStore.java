@@ -1,5 +1,7 @@
 package com.sambuja.deliverylink.convert;
 
+import com.sambuja.deliverylink.dto.CjDto;
+import com.sambuja.deliverylink.dto.DtoInterface;
 import com.sambuja.deliverylink.dto.NaverDto;
 import lombok.Data;
 import org.apache.poi.hpsf.Decimal;
@@ -18,14 +20,27 @@ import java.util.stream.Stream;
 
 @Data
 public class NaverSmartStore implements ConvertExcel {
+
     private Workbook workbook;
 
-
+    private final String name = "Naver";
 
     private final List<NaverDto> rowList = new ArrayList<>();
 
+    private List<DtoInterface> subRowList = new ArrayList<>();
+
     public NaverSmartStore(Workbook workbook){
         this.workbook = workbook;
+    }
+
+    @Override
+    public List<NaverDto> getRowList(){
+        return rowList;
+    }
+
+    @Override
+    public void setRowList(List<DtoInterface> list){
+        this.subRowList = list;
     }
 
     @Override
@@ -83,19 +98,15 @@ public class NaverSmartStore implements ConvertExcel {
 
                 switch (cell.getCellType()) {
                     case BOOLEAN:
-                        System.out.println(cell.getBooleanCellValue());
                         item.setValueByCellIndex(item.getHeaderList(index), String.valueOf(cell.getBooleanCellValue()));
                         break;
                     case NUMERIC:
-                        System.out.println(cell.getNumericCellValue());
                         item.setValueByCellIndex(item.getHeaderList(index), String.valueOf(cell.getNumericCellValue()));
                         break;
                     case STRING:
-                        System.out.println(cell.getRichStringCellValue());
                         item.setValueByCellIndex(item.getHeaderList(index), String.valueOf(cell.getRichStringCellValue()));
                         break;
                     default:
-                        System.out.println("default: " + cell.getCellFormula());
                         item.setValueByCellIndex(item.getHeaderList(index), String.valueOf(cell.getCellFormula()));
                         break;
                 }

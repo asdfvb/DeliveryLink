@@ -12,6 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface ConvertExcel {
+    String getName();
+
+    <T extends DtoInterface> List<T> getRowList();
+
+    void setRowList(List<DtoInterface> list);
 
     void readRowData();
 

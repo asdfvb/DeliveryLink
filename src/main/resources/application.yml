@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   mvc:
     view:
@@ -10,3 +13,6 @@ welcome:
 
 file:
   uploadPath: D://FileUpload//excel//
+
+logging:
+  config: classpath:logback.xml

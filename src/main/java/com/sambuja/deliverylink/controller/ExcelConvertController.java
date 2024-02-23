@@ -4,6 +4,7 @@ import com.sambuja.deliverylink.common.POICommon;
 import com.sambuja.deliverylink.convert.ConvertExcel;
 import com.sambuja.deliverylink.dto.DtoInterface;
 import com.sambuja.deliverylink.dto.FileDto;
+import com.sambuja.deliverylink.except.ErrorCode;
 import com.sambuja.deliverylink.except.ErrorException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -75,22 +76,48 @@ public class ExcelConvertController {
 
         ConvertExcel excel1 = null;
         ConvertExcel excel2 = null;
+        ConvertExcel targetExcelFile = null;
+        ConvertExcel subExcelFile = null;
+        Workbook newExcel = null;
 
-        for(MultipartFile file : dto.getFiles()) {
-            String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        try{
+            for(MultipartFile file : dto.getFiles()) {
+                String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 
-            if (!extension.equals("xlsx") && !extension.equals("xls")) {
-                log.warn("Please. Check File. You Can Upload Only Excel File");
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                if (!extension.equals("xlsx") && !extension.equals("xls")) {
+                    log.warn("Please. Check File. You Can Upload Only Excel File");
+                    return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                }
+
+                if(excel1 == null) {
+                    excel1 = this.poiCommon.validateExcelFile(file, dto.getPwd());
+                    excel1.getRowData();
+                }else {
+                    excel2 = this.poiCommon.validateExcelFile(file, dto.getPwd());
+                    excel2.getRowData();
+                }
             }
 
-            if(excel1 == null) {
-                excel1 = this.poiCommon.validateExcelFile(file, dto.getPwd());
-                excel1.getRowData();
-            }else {
-                excel2 = this.poiCommon.validateExcelFile(file, dto.getPwd());
-                excel2.getRowData();
-            }
+            targetExcelFile = ("CJ".equals(excel1.getName())) ? excel1 : excel2;
+            subExcelFile = ("CJ".equals(excel1.getName())) ? excel2 : excel1;
+
+            if(targetExcelFile == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            targetExcelFile.setRowList(subExcelFile.getRowList());
+
+            List<DtoInterface> dtoInterfaces = targetExcelFile.makeDistinctData();
+
+            newExcel = this.poiCommon.createNewExcel(dtoInterfaces);
+
+            String uploadPath = this.makeFolder();
+
+            File file= new File(uploadPath + "\\CjToNaver.xlsx");
+
+            newExcel.write(new FileOutputStream(file));
+
+            newExcel.close();
+        }catch (ArrayIndexOutOfBoundsException e){
+            throw new ErrorException(e, ErrorCode.ARRAY_INDEX_OUT);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
