@@ -13,6 +13,8 @@ public enum ErrorCode {
 
     private String message;
 
+//    private
+
     private ErrorCode(int code, HttpStatus status, String message){
         this.code = code;
         this.status = status;

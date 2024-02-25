@@ -23,6 +23,7 @@
             <ul>
                 <li style='font-weight: bold;'>스마트스토어 발주(주문)확인/발송관리 메뉴에서 다운받은 엑셀파일을 올려주세요.</li>
                 <li style='font-weight: bold;'>업로드 후 'D드라이브 > FileUpload > excel > 해당 날짜 폴더' 경로에서 파일을 찾을수 있습니다.</li>
+                <li style='font-weight: bold;'>File 명 : NaverToCj</li>
             </ul>
             <table style='border-top:1px solid #ff1282;'>
                 <tr>
@@ -54,8 +55,10 @@
         <tr>
             <h3>★ CJ대한통운 -> 스마트스토어</h3>
             <ul>
-                <li style='font-weight: bold;'>CJ대한통운 운송장출력 메뉴에서 </li>
+                <li style='font-weight: bold;'>CJ대한통운 운송장출력 메뉴에서 다운받은 엑셀 파일과</li>
+                <li style='font-weight: bold;'>스마트스토어 '발주(주문)확인/발송관리' 메뉴에서 다운받은 엑셀 파일 2개를 업로드해주세요.</li>
                 <li style='font-weight: bold;'>업로드 후 'D드라이브 > FileUpload > excel > 해당 날짜 폴더' 경로에서 파일을 찾을수 있습니다.</li>
+                <li style='font-weight: bold;'>File 명 : CjToNaver</li>
             </ul>
             <table style='border-top:1px solid #ff1282;'>
                 <tr>
@@ -105,7 +108,18 @@
 
     function setButtonEvent() {
         document.getElementById("excelUpload").addEventListener("click", async (e) => {
-            //${pageContext.request.contextPath}/copyToCJDelivery
+
+            const userPwd = $("#pwd").val();
+
+            if( !userPwd ){
+                alert("비밀번호를 입력해주세요.");
+                return false;
+            }
+
+            if( $("#files")[0].files.length == 0 ){
+                alert("파일을 선택 후 업로드를 시도해주세요.");
+                return false;
+            }
 
             const formData = new FormData();
             const files = document.getElementById("files").files;
@@ -119,10 +133,30 @@
                 method: "post"
                 , body: formData
             });
+
+            notifyRequestResultToCustomer(reponse);
         })
 
         document.getElementById("cjExcelUpload").addEventListener("click", async (e) => {
             //${pageContext.request.contextPath}/copyToCJDelivery
+
+            const selectFilesCnt = $("#cjFiles")[0].files.length;
+            const userPwd = $("#cjPwd").val();
+
+            if( !userPwd ){
+                alert("비밀번호를 입력해주세요.");
+                return false;
+            }
+
+            if( selectFilesCnt == 0 ){
+                alert("파일을 선택 후 업로드를 시도해주세요.");
+                return false;
+            }
+
+            if( selectFilesCnt != 2 ){
+                alert("1.CJ대한통운 운송장엑셀파일 \n2.스마트스토어 엑셀파일 \n2개의 파일을 선택 후 업로드를 시도해주세요.");
+                return false;
+            }
 
             const formData = new FormData();
             const files = document.getElementById("cjFiles").files;
@@ -136,8 +170,22 @@
                 method: "post"
                 , body: formData
             });
+
+            notifyRequestResultToCustomer(response);
         })
     }
 
+    function notifyRequestResultToCustomer(response) {
+        switch(response.status) {
+            case 200:
+                alert("성공적으로 업로드 되었습니다.");
+                break;
+            default:
+                alert("관리자에게 문의해주세요.");
+                break;
+        }
+
+
+    }
 </script>
 </html>
