@@ -32,11 +32,11 @@
         <p class="lead" style="font-size:1rem;">CJ대한통운 운송장출력 메뉴에서 다운받은 엑셀 파일과</p>
         <p class="lead" style="font-size:1rem;">업로드 후 'D드라이브 > FileUpload > excel > 해당 날짜 폴더' 경로에서 파일을 찾을수 있습니다.</p>
         <p class="lead" style="font-size:1rem;">File 명 : CjToNaver</p>
-        <div class="d-flex">
-            <table style='text-align: center;' class="d-flex mx-auto">
+        <div>
+            <table style='text-align: center;'>
                 <colgroup>
-                    <col width="40%">
-                    <col width="60%">
+                    <col width="30%">
+                    <col width="70%">
                 </colgroup>
                 <tr>
                     <th class="thStyle">사용 비밀번호</th>

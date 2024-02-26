@@ -28,16 +28,16 @@
             </nav>
         </div>
     </header>
-    <main class="contentCenter px-3">
+    <main class="px-3">
         <h3>스마트스토어 -> CJ대한통운</h3>
         <p class="lead" style="font-size:1rem;">스마트스토어 발주(주문)확인/발송관리 메뉴에서 다운받은 엑셀파일을 올려주세요.</p>
         <p class="lead" style="font-size:1rem;">업로드 후 'D드라이브 > FileUpload > excel > 해당 날짜 폴더' 경로에서 파일을 찾을수 있습니다.</p>
         <p class="lead" style="font-size:1rem;">File 명 : NaverToCj</p>
-        <div class="d-flex">
-            <table style='text-align: center;' class="d-flex mx-auto">
+        <div>
+            <table style='text-align: center;'>
                 <colgroup>
-                    <col width="40%">
-                    <col width="60%">
+                    <col width="30%">
+                    <col width="70%">
                 </colgroup>
                 <tr>
                     <th class="thStyle">사용 비밀번호</th>
@@ -47,7 +47,7 @@
                 </tr>
 
                 <tr>
-                    <th class="thStyle">부가 자재(아이스팩 등등..)</th>
+                    <th class="thStyle">아이스팩 개수(1박스)</th>
                     <td class="tdStyle">
                         <input type="text" id="etcCnt" name="etcCnt"/>
                     </td>
@@ -97,13 +97,6 @@
         border: 1px solid white;
     }
 
-    contentCenter {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-
-    }
     input[type="text"], input[type="password"] {
         width: 100%;
 
