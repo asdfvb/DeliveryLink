@@ -91,7 +91,6 @@ public class NaverSmartStore implements ConvertExcel {
                 Cell cell = row.getCell(index);
 
                 if(cell == null || cell.getCellType() == CellType.BLANK){
-                    System.out.println(">>> BLANK : " + i + "행 : " + index + "열");
                     item.setValueByCellIndex(item.getHeaderList(index), "");
                     continue;
                 }
@@ -124,17 +123,20 @@ public class NaverSmartStore implements ConvertExcel {
 
             NaverDto naverDto = distinctList.stream().filter(distinct -> dto.getOrderNumber().equals(distinct.getOrderNumber())).findAny().orElseGet(NaverDto::new);
 
+            //distinctList에 1개라도 들어가 있는 데이터일경우는 continue
             if(distinctList.size() > 0 && naverDto.getOrderNumber() != null) continue;
 
-            //동일 수취인의 총 주문 수량 구하기
-            int cntSum = this.rowList.stream()
+            //동일 수취인의 총 주문 리스트 구하기
+            List<NaverDto> collect = this.rowList.stream()
                     .filter(item -> item.getOrderNumber().equals(dto.getOrderNumber()))
-                    .mapToInt(item -> Math.round(Float.parseFloat(item.getCnt()))).sum();
+                    .collect(Collectors.toList());
 
-            BigDecimal bd = new BigDecimal(cntSum);
+            BigDecimal decimal = new BigDecimal(dto.calculateCjBoxCnt(collect) / dto.getHEIGHT());
 
-            int remainValue = bd.divide(BigDecimal.valueOf(5)).setScale(0, RoundingMode.UP).intValue();
+            //총 주문 수량의 높이를 구해서 몇개의 박스가 필요한지 구하기
+            int remainValue = decimal.setScale(0, RoundingMode.HALF_UP).intValue();
 
+            //박스 수만큼 포문돌려서 데이터 리스트 만듬
             for( int i = 0; i < remainValue; i++){
                 dto.setCnt("1");
                 distinctList.add(dto);

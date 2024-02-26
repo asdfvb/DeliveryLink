@@ -10,12 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WelcomeController {
     @GetMapping("/")
     public String welcome(){
-        log.debug(">> welcome");
-        return "list";
+        return "naver";
     }
 
-    @GetMapping("/welcome")
+    @GetMapping("/cj")
     public String welcome2(){
-        return "list";
+        return "cj";
     }
 }

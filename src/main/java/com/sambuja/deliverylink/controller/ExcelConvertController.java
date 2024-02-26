@@ -4,7 +4,8 @@ import com.sambuja.deliverylink.common.POICommon;
 import com.sambuja.deliverylink.convert.ConvertExcel;
 import com.sambuja.deliverylink.dto.DtoInterface;
 import com.sambuja.deliverylink.dto.FileDto;
-import com.sambuja.deliverylink.except.ErrorCode;
+import com.sambuja.deliverylink.except.Response;
+import com.sambuja.deliverylink.except.ResponseDto;
 import com.sambuja.deliverylink.except.ErrorException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -41,7 +40,7 @@ public class ExcelConvertController {
     }
 
     @PostMapping("/copyToCJDelivery")
-    public ResponseEntity copyToCJDelivery(@ModelAttribute FileDto dto, HttpServletResponse response) throws IOException {
+    public Response copyToCJDelivery(@ModelAttribute FileDto dto, HttpServletResponse response) throws IOException {
 
         MultipartFile uploadFile = dto.getFiles().get(0);
 
@@ -49,7 +48,11 @@ public class ExcelConvertController {
 
         if (!extension.equals("xlsx") && !extension.equals("xls")) {
             log.warn("Please. Check File. You Can Upload Only Excel File");
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+//            throw new ErrorException(ResponseDto.WRONG_FILE_EXTENTION);
+            return Response
+                    .builder()
+                    .dto(ResponseDto.WRONG_FILE_EXTENTION)
+                    .build();
         }
 
         ConvertExcel excel = this.poiCommon.validateExcelFile(uploadFile, dto.getPwd());
@@ -68,7 +71,12 @@ public class ExcelConvertController {
 
         newExcel.close();
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return  Response
+                .builder()
+                .dto(
+                    ResponseDto.SUCCESS
+                )
+                .build();
     }
 
     @PostMapping("/copyToNaverDelivery")
@@ -117,7 +125,7 @@ public class ExcelConvertController {
 
             newExcel.close();
         }catch (ArrayIndexOutOfBoundsException e){
-            throw new ErrorException(e, ErrorCode.ARRAY_INDEX_OUT);
+            throw new ErrorException(e, ResponseDto.ARRAY_INDEX_OUT);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);

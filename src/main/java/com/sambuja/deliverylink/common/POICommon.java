@@ -4,13 +4,10 @@ import com.sambuja.deliverylink.convert.CjDelivery;
 import com.sambuja.deliverylink.convert.ConvertExcel;
 import com.sambuja.deliverylink.convert.NaverSmartStore;
 import com.sambuja.deliverylink.dto.DtoInterface;
-import com.sambuja.deliverylink.except.ErrorCode;
+import com.sambuja.deliverylink.except.ResponseDto;
 import com.sambuja.deliverylink.except.ErrorException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -109,7 +106,7 @@ public class POICommon {
                 }
             }
         }catch (ArrayIndexOutOfBoundsException e){
-            throw new ErrorException(e, ErrorCode.ARRAY_INDEX_OUT);
+            throw new ErrorException(e, ResponseDto.ARRAY_INDEX_OUT);
         }
 
 

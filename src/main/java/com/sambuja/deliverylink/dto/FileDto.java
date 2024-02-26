@@ -9,4 +9,5 @@ import java.util.List;
 public class FileDto {
     private List<MultipartFile> files;
     private String pwd;
+    private String etcCnt;
 }
